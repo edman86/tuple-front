@@ -1,55 +1,30 @@
-import { useState, useEffect } from 'react';
-import MenuBar from './components/MenuBar';
-import LoginForm from './components/LoginForm';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import Header from './components/Header';
+import CssBaseline from '@mui/material/CssBaseline';
+import Container from '@mui/material/Container';
+import Home from './components/Home';
+import PostView from './components/PostView';
+import AddAnnouncement from './components/AddAnnouncement';
+import Login from './components/Login';
+import Registration from './components/Registration';
 
-import './App.css';
+import { Routes, Route } from 'react-router-dom'; 
 
 function App() {
-    const [announcements, setAnnouncements] = useState([]);
-    const [openLoginForm, setOpenLoginForm] = useState(false);
-    
-    const handleOpenLoginForm = () => setOpenLoginForm(true);
-    const handleCloseLoginForm = () => setOpenLoginForm(false);
-
-    const handleAddUser = (username) => {
-        axios({
-            method: 'post',
-            url: 'http://localhost:5000/users/add',
-            data: {
-                username: username,
-            }
-        });
-    };
-
-    useEffect(() => {
-        axios.get('http://localhost:5000/announcements')
-            .then(res => setAnnouncements(res.data))
-            .catch(error => console.log(error))
-    }, []);
-
     return (
-        <div className="App">
-            <MenuBar 
-                handleOpenLoginForm={handleOpenLoginForm}
-            />
-            <section className='announcements-list'>
-                {announcements.map(announcement => {
-                    return (
-                        <div className='card'>
-                            <img src={announcement.imageUrl} alt={announcement.title} />
-                            <h3>{announcement.title}</h3>
-                            <p>{announcement.description}</p>
-                        </div>
-                    );
-                })}
-            </section>
-            <LoginForm 
-                openLoginForm={openLoginForm}
-                handleCloseLoginForm={handleCloseLoginForm}
-                handleAddUser={handleAddUser}
-            />
-        </div>
+        <>
+            <CssBaseline />
+            <Header />
+            <Container maxWidth="lg">
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Registration />} />
+                    <Route path="/posts/:id" element={<PostView />} />
+                    <Route path="/add-post" element={<AddAnnouncement />} />
+                </Routes>
+            </Container>
+        </>
     );
 }
 
