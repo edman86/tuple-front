@@ -2,16 +2,14 @@ import React, { useEffect } from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Grid from '@mui/material/Grid';
-
 import Announcement from '../Announcement';
-import { TagsBlock } from '../TagsBlock';
-
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAnnouncements } from '../../redux/slices/announcementsSlice';
 
 const Home = () => {
     const dispatch = useDispatch();
-    const { announcements, tags } = useSelector(state => state.announcements);
+    const { announcements } = useSelector(state => state.announcements);
+    const userData = useSelector(state => state.users.userData);
 
     const isAnnouncementsLoading = announcements.status === 'loading';
 
@@ -21,31 +19,25 @@ const Home = () => {
 
     return (
         <>
-            <Tabs style={{ marginBottom: 15 }} value={0} aria-label="basic tabs example">
-                <Tab label="New" />
-                <Tab label="Most viewed" />
-            </Tabs>
             <Grid container spacing={4}>
-                <Grid xs={8} item>
-                    {(isAnnouncementsLoading ? [...Array(5)] : announcements.items).map((obj, i) =>
-                        isAnnouncementsLoading ?
-                            (<Announcement key={i} isLoading={true} />)
-                            :
-                            (<Announcement
-                                id={1}
+                {(isAnnouncementsLoading ? [...Array(5)] : announcements.items).map((obj, i) => {
+                    return isAnnouncementsLoading ?
+                        (<Grid key={i} item xs={12} sm={6} md={4}>
+                            <Announcement isLoading={true} />
+                        </Grid>)
+                        :
+                        (<Grid key={obj._id} item xs={12} sm={6} md={4}>
+                            <Announcement
+                                id={obj._id}
                                 title={obj.title}
-                                imageUrl={obj.imageUrl}
+                                imageUrl={obj.imageUrl ? `http://localhost:5000${obj.imageUrl}` : ''}
                                 user={obj.user}
                                 createdAt={obj.createdAt}
                                 viewsCount={obj.viewsCount}
-                                tags={['lorem', 'ipsum', 'dolor']}
-                                isEditable
+                                isEditable={userData && userData._id === obj.user._id}
                             />
-                            ))}
-                </Grid>
-                <Grid xs={4} item>
-                    <TagsBlock items={['lorem', 'ipsum', 'dolor']} isLoading={false} />
-                </Grid>
+                        </Grid>)
+                })}
             </Grid>
         </>
     );

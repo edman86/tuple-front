@@ -1,15 +1,21 @@
-import React from 'react';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-
+import { UserInfo } from '../UserInfo';
 import { Link } from 'react-router-dom';
+import { logout, selectIsAuth, selectUserData } from '../../redux/slices/usersSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 import styles from './Header.module.scss';
 
 const Header = () => {
-    const isAuth = false;
+    const isAuth = useSelector(selectIsAuth);
+    const userData = useSelector(selectUserData);
+    const dispatch = useDispatch();
 
-    const onClickLogout = () => { };
+    const logoutClickHandle = () => {
+        dispatch(logout());
+        window.localStorage.removeItem('token');
+    };
 
     return (
         <div className={styles.root}>
@@ -22,11 +28,22 @@ const Header = () => {
                         {isAuth ? (
                             <>
                                 <Link to="/posts/create">
-                                    <Button variant="contained">Add announcement</Button>
+                                    <Button
+                                        variant="contained"
+                                    >
+                                        Add announcement
+                                    </Button>
                                 </Link>
-                                <Button onClick={onClickLogout} variant="contained" color="error">
+                                <Button
+                                    onClick={logoutClickHandle}
+                                    variant="contained"
+                                >
                                     Sign Out
                                 </Button>
+                                <div className={styles.userInfo}>
+                                    <img className={styles.avatar} src={userData.avatarUrl || '/noavatar.png'} alt={userData.username} />
+                                    <span className={styles.userName}>{userData.username}</span> 
+                                </div>
                             </>
                         ) : (
                             <>
@@ -43,6 +60,7 @@ const Header = () => {
             </Container>
         </div>
     );
+
 };
 
 export default Header;

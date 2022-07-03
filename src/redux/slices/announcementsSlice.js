@@ -27,7 +27,8 @@ const announcementsSlice = createSlice({
     },
     extraReducers: {
         [fetchAnnouncements.pending]: (state) => {
-            state.announcements.status = 'loading'
+            state.announcements.items = [];
+            state.announcements.status = 'loading';
         },
         [fetchAnnouncements.fulfilled]: (state, action) => {
             state.announcements.items = action.payload;
@@ -36,7 +37,7 @@ const announcementsSlice = createSlice({
         [fetchAnnouncements.rejected]: (state) => {
             state.announcements.items = [];
             state.announcements.status = 'error';
-        }
+        },
     }
 });
 
