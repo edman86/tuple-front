@@ -1,6 +1,5 @@
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import { UserInfo } from '../UserInfo';
 import { Link } from 'react-router-dom';
 import { logout, selectIsAuth, selectUserData } from '../../redux/slices/usersSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -36,7 +35,7 @@ const Header = () => {
                                 </Link>
                                 <Button
                                     onClick={logoutClickHandle}
-                                    variant="contained"
+                                    variant="outlined"
                                 >
                                     Sign Out
                                 </Button>

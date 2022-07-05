@@ -1,7 +1,7 @@
 .title {
     input {
-        font-size: 42px;
-        font-weight: 900;
+        font-size: 2rem;
+        font-weight: 700;
     }
 
     div {
@@ -17,10 +17,6 @@
     width: 100%;
 }
 
-.tags {
-    margin: 15px 0;
-}
-
 .editor {
     margin: 30px -30px;
 
@@ -32,7 +28,7 @@
 
         .editor-toolbar {
             border: 0;
-            background-color: rgba(0, 0, 0, 0.2);
+            background-color: #eceaea;
         }
     }
 }

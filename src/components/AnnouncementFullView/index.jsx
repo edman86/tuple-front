@@ -36,7 +36,9 @@ const AnnouncementFullView = () => {
                 }}
                 createdAt={postData.createdAt}
                 viewsCount={postData.viewsCount}
-                tags={["lorem", "ipsum", "dolor"]}
+                phoneNumber={postData.phoneNumber}
+                adress={postData.adress}
+                category={postData.category}
                 isFullPost
             >
                 <ReactMarkdown children={postData.description} />

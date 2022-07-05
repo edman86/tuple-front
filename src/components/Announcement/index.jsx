@@ -1,13 +1,17 @@
 import React from 'react';
 import clsx from 'clsx';
 import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Clear';
+import Chip from '@mui/material/Chip';
+import ContactPhoneRoundedIcon from '@mui/icons-material/ContactPhoneRounded';
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import EditIcon from '@mui/icons-material/Edit';
 import EyeIcon from '@mui/icons-material/RemoveRedEyeOutlined';
 import { UserInfo } from '../UserInfo';
 import { PostSkeleton } from './Skeleton';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from '../../axios';
+import { useDispatch } from 'react-redux';
+import { deleteAnnouncement } from '../../redux/slices/announcementsSlice';
 
 import styles from './Announcement.module.scss';
 
@@ -18,63 +22,62 @@ const Announcement = ({
     imageUrl,
     user,
     viewsCount,
+    phoneNumber,
+    adress,
+    category,
     children,
     isFullPost,
     isLoading,
     isEditable,
 }) => {
     const navigate = useNavigate();
-    
+    const dispatch = useDispatch();
+
     const handleEdit = (e) => {
         e.stopPropagation();
-
-        navigate(`posts/${id}/edit`)
+        navigate(`posts/${id}/edit`);
     };
 
-    const handleRemove = async (e) => {
-        try {
-            await axios.delete(`/posts/${id}`);
-            navigate("/");
-
-        } catch (err) {
-            console.log(err);
-            alert('Deleting announcement error');
-        }
+    const handleRemovePost = async (e) => {
+        dispatch(deleteAnnouncement(id))
+            .then(() => navigate('/'));
     };
-    
+
     const handleClickPost = (e) => {
         e.stopPropagation();
-        
+
         if (isFullPost) {
             return;
         }
+
         navigate(`/posts/${id}`);
     };
-    
+
     if (isLoading) {
         return <PostSkeleton />;
     }
 
     return (
-        <div 
+        <div
             className={clsx(styles.root, { [styles.rootFull]: isFullPost })}
             onClick={handleClickPost}
         >
             {isEditable && (
                 <div className={styles.editButtons}>
                     <Link to={`/posts/${id}/edit`}>
-                        <IconButton 
+                        <IconButton
                             color="primary"
                             onClick={handleEdit}
                         >
                             <EditIcon />
                         </IconButton>
                     </Link>
-                    <IconButton 
-                        onClick={handleRemove} 
+                    <IconButton
+                        type="submit"
+                        onClick={handleRemovePost}
                         color="secondary"
                     >
-                        <DeleteIcon />
+                        <DeleteForeverOutlinedIcon />
                     </IconButton>
                 </div>
             )}
@@ -86,14 +89,32 @@ const Announcement = ({
                 />
             )}
             <div className={styles.wrapper}>
-                <UserInfo 
-                    {...user} 
-                    additionalText={createdAt} 
-                />
+                <div className={styles.info}>
+                    <UserInfo
+                        {...user}
+                        additionalText={createdAt}
+                    />
+                    {isFullPost &&
+                        <>
+                            <div className={styles.phone_number}>
+                                <ContactPhoneRoundedIcon />
+                                <span>
+                                    Phone: {phoneNumber}
+                                </span>
+                            </div>
+                            <div className={styles.adress}>
+                                <HomeRoundedIcon />
+                                <span>
+                                    Adress: {adress ? adress : 'unknown'}
+                                </span>
+                            </div>
+                        </>}
+                </div>
                 <div className={styles.indention}>
                     <h2 className={clsx(styles.title, { [styles.titleFull]: isFullPost })}>
                         {title}
                     </h2>
+                    <Chip label={category} variant="outlined" />
                     {children && <div className={styles.content}>{children}</div>}
                     <ul className={styles.postDetails}>
                         <li>

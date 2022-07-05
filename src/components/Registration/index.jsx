@@ -4,10 +4,11 @@ import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
-import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRegister, selectIsAuth } from '../../redux/slices/usersSlice';
 import { Navigate } from "react-router-dom";
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 import styles from './Login.module.scss';
 
@@ -15,27 +16,32 @@ const Registration = () => {
     const dispatch = useDispatch();
     const isAuth = useSelector(selectIsAuth);
     
-    const { 
-        register, 
-        handleSubmit, 
-        setError,
-        formState: { errors, isValid }, 
-    } = useForm({
-        defaultValues: {
-            username: '',
+    const formik = useFormik({
+        initialValues: {
             email: '',
-            password: ''
+            password: '',
         },
-        mode: 'onChange'
+        validationSchema: Yup.object({
+            username: Yup.string()
+                .min(3, 'Password cannot be less than 3 characters')
+                .required('Required'),
+            email: Yup.string()
+                .email('Invalid email address')
+                .required('Required'),
+            password: Yup.string()
+                .min(5, 'Password cannot be less than 5 characters')
+                .required('Required'),
+        }),
+        onSubmit: async (values) => {
+            const data = await dispatch(fetchRegister(values));
+            if (data.error) {
+                alert(data.error.message);
+            }
+            if (data.payload && data.payload.token) {
+                localStorage.setItem('token', data.payload.token);
+            }
+        },
     });
-
-    const onSubmit = async (values) => {
-        const data = await dispatch(fetchRegister(values));
-
-        if (data.payload && data.payload.token) {
-            localStorage.setItem('token', data.payload.token);
-        }
-    };
 
     if (isAuth) {
         return <Navigate to="/" />
@@ -49,36 +55,48 @@ const Registration = () => {
             <div className={styles.avatar}>
                 <Avatar sx={{ width: 100, height: 100 }} />
             </div>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <TextField 
-                    className={styles.field} 
-                    label="Username" 
-                    error={Boolean(errors.username?.message)}
-                    helperText={errors.username?.message}
-                    {...register('username', {required: 'Username is required'})}    
-                    fullWidth 
+            
+            <form onSubmit={formik.handleSubmit}>
+            <TextField
+                    className={styles.field}
+                    id="username"
+                    name="username"
+                    label="Username"
+                    error={formik.touched.username && Boolean(formik.errors.username)}
+                    helperText={formik.touched.username && formik.errors.username}
+                    value={formik.values.username}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    fullWidth
                 />
-                <TextField 
-                    className={styles.field} 
-                    label="E-Mail" 
-                    error={Boolean(errors.email?.message)}
-                    helperText={errors.email?.message}
-                    {...register('email', {required: 'Email is required'})}
-                    fullWidth 
+                <TextField
+                    className={styles.field}
+                    id="email"
+                    name="email"
+                    label="Email"
+                    error={formik.touched.email && Boolean(formik.errors.email)}
+                    helperText={formik.touched.email && formik.errors.email}
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    fullWidth
                 />
-                <TextField 
-                    className={styles.field} 
-                    label="Password" 
-                    error={Boolean(errors.password?.message)}
-                    helperText={errors.password?.message}
-                    {...register('password', {required: 'Password is required'})}
-                    fullWidth 
+                <TextField
+                    className={styles.field}
+                    id="password"
+                    name="password"
+                    label="Password"
+                    error={formik.touched.password && Boolean(formik.errors.password)}
+                    helperText={formik.touched.password && formik.errors.password}
+                    value={formik.values.password}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    fullWidth
                 />
                 <Button 
                     type="submit"
                     size="large" 
                     variant="contained"
-                    disabled={!isValid}
                     fullWidth
                 >
                     Sign up

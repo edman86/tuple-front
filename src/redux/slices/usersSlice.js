@@ -24,7 +24,7 @@ export const fetchMe = createAsyncThunk(
 
 const initialState = {
    userData: null,
-   status: 'loading'
+   status: 'loading',
 };
 
 const usersSlice = createSlice({
@@ -42,9 +42,9 @@ const usersSlice = createSlice({
         },
         [fetchUserData.fulfilled]: (state, action) => {
             state.userData = action.payload;
-            state.status = 'loaded';
+            state.status = 'loaded';  
         },
-        [fetchUserData.rejected]: (state) => {
+        [fetchUserData.rejected]: (state, action) => {
             state.userData = null;
             state.status = 'error';
         },
@@ -56,7 +56,7 @@ const usersSlice = createSlice({
             state.userData = action.payload;
             state.status = 'loaded';
         },
-        [fetchMe.rejected]: (state) => {
+        [fetchMe.rejected]: (state, action) => {
             state.userData = null;
             state.status = 'error';
         },
@@ -68,7 +68,7 @@ const usersSlice = createSlice({
             state.userData = action.payload;
             state.status = 'loaded';
         },
-        [fetchRegister.rejected]: (state) => {
+        [fetchRegister.rejected]: (state, action) => {
             state.userData = null;
             state.status = 'error';
         },
