@@ -18,12 +18,13 @@ const Registration = () => {
     
     const formik = useFormik({
         initialValues: {
+            username: '',
             email: '',
             password: '',
         },
         validationSchema: Yup.object({
             username: Yup.string()
-                .min(3, 'Password cannot be less than 3 characters')
+                .min(3, 'Username cannot be less than 3 characters')
                 .required('Required'),
             email: Yup.string()
                 .email('Invalid email address')
